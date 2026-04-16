@@ -45,9 +45,11 @@ members = [
 
 [workspace.package]
 version = "0.0.1"
+authors = ["Onyeka Obi <softwareengineerasaservant@isurvivable.cv>"]
 edition = "2024"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/MavenRain/plonky-cat"
+homepage = "https://github.com/MavenRain/plonky-cat"
 readme = "README.md"
 keywords = ["zero-knowledge", "plonk", "fri", "sumcheck", "category-theory"]
 categories = ["cryptography", "mathematics"]

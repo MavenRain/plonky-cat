@@ -22,6 +22,39 @@ A `comp-cat-rs`-based rebuild of the Plonky3 proving toolkit.  v0.1 unifies FRI 
 | `plonky-cat-prover` | Prover driver: anamorphism over `ReductionFunctor` |
 | `plonky-cat-verifier` | Verifier driver: catamorphism over `ReductionFunctor` |
 
+## Publishing to crates.io
+
+Crates must be published in dependency order.  Each tier requires all previous tiers to be live on crates.io before `cargo publish` will succeed.
+
+```
+Tier 1 (no internal deps):
+  plonky-cat-field
+  plonky-cat-reduce
+
+Tier 2 (depends on tier 1):
+  plonky-cat-poly         (field)
+  plonky-cat-hash         (field)
+  plonky-cat-fft          (field)
+  plonky-cat-transcript   (field)
+
+Tier 3 (depends on tiers 1-2):
+  plonky-cat-merkle       (field, hash)
+  plonky-cat-code         (field, fft)
+  plonky-cat-sumcheck     (field, poly, reduce)
+  plonky-cat-plonk        (field, poly)
+  plonky-cat-prover       (reduce, transcript, field)
+  plonky-cat-verifier     (reduce, transcript, field)
+
+Tier 4 (depends on tiers 1-3):
+  plonky-cat-fri          (field, hash, merkle, reduce, poly)
+  plonky-cat-tensor-pcs   (stub; currently no internal deps)
+
+Tier 5 (depends on tiers 1-4):
+  plonky-cat-basefold     (field, hash, merkle, reduce, fri, sumcheck)
+```
+
+The root `plonky-cat` package is `publish = false`; it exists only to host examples.
+
 ## License
 
 Licensed under either of
