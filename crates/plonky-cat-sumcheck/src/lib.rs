@@ -9,7 +9,7 @@ use plonky_cat_field::Field;
 use plonky_cat_poly::MultilinearPoly;
 use plonky_cat_reduce::{
     ProverContinue, ProverDone, ProverStep,
-    ReductionFunctor,
+    ReductionFunctor, TranscriptSerialize,
     VerifierContinue, VerifierDone, VerifierStep,
 };
 
@@ -85,6 +85,35 @@ impl<F: Field> SumcheckRoundMsg<F> {
     }
 }
 
+impl<F: Field> TranscriptSerialize<F> for SumcheckRoundMsg<F> {
+    fn to_field_elements(&self) -> Vec<F> {
+        vec![self.sum_lo, self.sum_hi]
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SumcheckOpening<F> {
+    value: F,
+}
+
+impl<F: Field> SumcheckOpening<F> {
+    #[must_use]
+    pub fn new(value: F) -> Self {
+        Self { value }
+    }
+
+    #[must_use]
+    pub fn value(&self) -> F {
+        self.value
+    }
+}
+
+impl<F: Field> TranscriptSerialize<F> for SumcheckOpening<F> {
+    fn to_field_elements(&self) -> Vec<F> {
+        vec![self.value]
+    }
+}
+
 pub struct Sumcheck<F> {
     _marker: PhantomData<F>,
 }
@@ -94,7 +123,7 @@ impl<F: Field> ReductionFunctor for Sumcheck<F> {
     type Witness = SumcheckWitness<F>;
     type RoundMsg = SumcheckRoundMsg<F>;
     type Challenge = F;
-    type BaseOpening = F;
+    type BaseOpening = SumcheckOpening<F>;
     type Error = Error;
 
     fn prover_step(
@@ -110,7 +139,7 @@ impl<F: Field> ReductionFunctor for Sumcheck<F> {
                 .first()
                 .copied()
                 .ok_or(Error::WitnessEmpty)
-                .map(|opening| ProverStep::Done(ProverDone::new(claim, witness, opening)))
+                .map(|val| ProverStep::Done(ProverDone::new(claim, witness, SumcheckOpening::new(val))))
         } else {
             let (sum_lo, sum_hi) = witness.poly.sumcheck_round_poly();
             let msg = SumcheckRoundMsg::new(sum_lo, sum_hi);
@@ -140,7 +169,7 @@ impl<F: Field> ReductionFunctor for Sumcheck<F> {
                 if new_vars == 0 {
                     Ok(VerifierStep::Done(VerifierDone::new(
                         SumcheckClaim::new(new_sum, 0),
-                        new_sum,
+                        SumcheckOpening::new(new_sum),
                     )))
                 } else {
                     Ok(VerifierStep::Continue(VerifierContinue::new(

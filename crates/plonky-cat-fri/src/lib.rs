@@ -9,7 +9,7 @@ use plonky_cat_field::Field;
 use plonky_cat_hash::Hasher;
 use plonky_cat_merkle::MerkleTree;
 use plonky_cat_reduce::{
-    ProverContinue, ProverDone, ProverStep,
+    ProverContinue, ProverDone, ProverStep, TranscriptSerialize,
     ReductionFunctor,
     VerifierContinue, VerifierDone, VerifierStep,
 };
@@ -87,6 +87,12 @@ impl<F: Field> FriRoundMsg<F> {
     }
 }
 
+impl<F: Field> TranscriptSerialize<F> for FriRoundMsg<F> {
+    fn to_field_elements(&self) -> Vec<F> {
+        vec![self.folded_root]
+    }
+}
+
 // -- Base opening: the final (constant) codeword value --
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -100,9 +106,19 @@ impl<F: Field> FriOpening<F> {
         Self { constant_value }
     }
 
+    pub fn into_constant_value(self) -> F {
+        self.constant_value
+    }
+
     #[must_use]
     pub fn constant_value(&self) -> F {
         self.constant_value
+    }
+}
+
+impl<F: Field> TranscriptSerialize<F> for FriOpening<F> {
+    fn to_field_elements(&self) -> Vec<F> {
+        vec![self.constant_value]
     }
 }
 

@@ -31,7 +31,7 @@ fn main() -> Result<(), String> {
         .map_err(|e| format!("prove: {e}"))?;
 
     println!("proof: {} round messages", proof.messages().len());
-    println!("opening: {}", proof.opening());
+    println!("opening: {}", proof.opening().value());
 
     let v_transcript = AlgebraicTranscript::<BabyBear>::new();
     let v_claim = SumcheckClaim::new(claimed_sum, 2);
@@ -41,7 +41,7 @@ fn main() -> Result<(), String> {
 
     match verdict {
         Verdict::Accept(opening) => {
-            println!("verifier accepted, opening: {opening}");
+            println!("verifier accepted, opening: {}", opening.value());
             if opening == *proof.opening() {
                 println!("PASS: openings match");
             } else {

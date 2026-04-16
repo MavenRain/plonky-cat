@@ -3,7 +3,7 @@
 mod error;
 pub use self::error::Error;
 
-use plonky_cat_reduce::{ProverStep, ReductionFunctor};
+use plonky_cat_reduce::{ProverStep, ReductionFunctor, TranscriptSerialize};
 use plonky_cat_transcript::Transcript;
 
 #[derive(Debug, Clone)]
@@ -36,8 +36,8 @@ impl<M, O> Proof<M, O> {
 const MAX_ROUNDS: usize = 1024;
 
 /// Prove driver: anamorphism over a ReductionFunctor.
-/// Squeezes challenges, calls prover_step, collects messages until Done.
-/// v0.1: pure (no Io wrapping).
+/// Squeezes challenges, calls prover_step, absorbs round messages into the
+/// transcript for Fiat-Shamir soundness, collects messages until Done.
 pub fn prove<R, T>(
     claim: R::Claim,
     witness: R::Witness,
@@ -45,6 +45,7 @@ pub fn prove<R, T>(
 ) -> Result<(Proof<R::RoundMsg, R::BaseOpening>, T), Error<R::Error>>
 where
     R: ReductionFunctor<Challenge = T::F>,
+    R::RoundMsg: TranscriptSerialize<T::F>,
     T: Transcript,
     R::Error: std::fmt::Debug,
 {
@@ -60,6 +61,7 @@ fn prove_rec<R, T>(
 ) -> Result<(Proof<R::RoundMsg, R::BaseOpening>, T), Error<R::Error>>
 where
     R: ReductionFunctor<Challenge = T::F>,
+    R::RoundMsg: TranscriptSerialize<T::F>,
     T: Transcript,
     R::Error: std::fmt::Debug,
 {
@@ -73,10 +75,11 @@ where
             .and_then(|step| match step {
                 ProverStep::Continue(c) => {
                     let (c_next, w_next, msg) = c.into_parts();
+                    let t3 = absorb_msg::<T>(t2, &msg);
                     let new_collected: Vec<R::RoundMsg> = collected.into_iter()
                         .chain(std::iter::once(msg))
                         .collect();
-                    prove_rec::<R, T>(c_next, w_next, t2, new_collected, rounds_left - 1)
+                    prove_rec::<R, T>(c_next, w_next, t3, new_collected, rounds_left - 1)
                 }
                 ProverStep::Done(d) => {
                     let (_c_final, _w_final, opening) = d.into_parts();
@@ -84,4 +87,10 @@ where
                 }
             })
     }
+}
+
+fn absorb_msg<T: Transcript>(transcript: T, msg: &impl TranscriptSerialize<T::F>) -> T {
+    msg.to_field_elements()
+        .into_iter()
+        .fold(transcript, |t, f| t.absorb(f))
 }

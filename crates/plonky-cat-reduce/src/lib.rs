@@ -7,6 +7,12 @@ pub use self::error::SeqError;
 
 use std::marker::PhantomData;
 
+/// Serialize a protocol message into field elements for transcript absorption.
+/// Every `RoundMsg` type must implement this for Fiat-Shamir soundness.
+pub trait TranscriptSerialize<F> {
+    fn to_field_elements(&self) -> Vec<F>;
+}
+
 pub trait ReductionFunctor {
     type Claim;
     type Witness;
@@ -214,6 +220,21 @@ pub enum SeqRoundMsg<MA, MB, OA> {
     PhaseB(MB),
 }
 
+impl<F, MA, MB, OA> TranscriptSerialize<F> for SeqRoundMsg<MA, MB, OA>
+where
+    MA: TranscriptSerialize<F>,
+    MB: TranscriptSerialize<F>,
+    OA: TranscriptSerialize<F>,
+{
+    fn to_field_elements(&self) -> Vec<F> {
+        match self {
+            Self::PhaseA(ma) => ma.to_field_elements(),
+            Self::Transition(oa) => oa.to_field_elements(),
+            Self::PhaseB(mb) => mb.to_field_elements(),
+        }
+    }
+}
+
 impl<Ad: SeqAdapter> ReductionFunctor for Seq<Ad>
 where
     <Ad::A as ReductionFunctor>::BaseOpening: Clone,
@@ -384,6 +405,18 @@ impl<MA, MB> InterleavedMsg<MA, MB> {
 
     pub fn into_parts(self) -> (MA, MB) {
         (self.msg_a, self.msg_b)
+    }
+}
+
+impl<F, MA, MB> TranscriptSerialize<F> for InterleavedMsg<MA, MB>
+where
+    MA: TranscriptSerialize<F>,
+    MB: TranscriptSerialize<F>,
+{
+    fn to_field_elements(&self) -> Vec<F> {
+        let a_elems = self.msg_a.to_field_elements();
+        let b_elems = self.msg_b.to_field_elements();
+        a_elems.into_iter().chain(b_elems).collect()
     }
 }
 

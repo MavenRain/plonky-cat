@@ -9,7 +9,7 @@ use plonky_cat_field::Field;
 use plonky_cat_hash::Hasher;
 use plonky_cat_reduce::{ClaimAdapter, ClaimLens, Interleave};
 use plonky_cat_fri::{Fri, FriClaim, FriOpening, FriWitness};
-use plonky_cat_sumcheck::{Sumcheck, SumcheckClaim, SumcheckWitness};
+use plonky_cat_sumcheck::{Sumcheck, SumcheckClaim, SumcheckOpening, SumcheckWitness};
 
 // -- Shared claim: pairs a FRI codeword claim with a sumcheck claim --
 
@@ -56,12 +56,12 @@ impl<H: Hasher> BaseFoldWitness<H> {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BaseFoldOpening<F: Field> {
     fri_opening: FriOpening<F>,
-    sum_opening: F,
+    sum_opening: SumcheckOpening<F>,
 }
 
 impl<F: Field> BaseFoldOpening<F> {
     #[must_use]
-    pub fn new(fri_opening: FriOpening<F>, sum_opening: F) -> Self {
+    pub fn new(fri_opening: FriOpening<F>, sum_opening: SumcheckOpening<F>) -> Self {
         Self { fri_opening, sum_opening }
     }
 
@@ -71,8 +71,8 @@ impl<F: Field> BaseFoldOpening<F> {
     }
 
     #[must_use]
-    pub fn sum_opening(&self) -> F {
-        self.sum_opening
+    pub fn sum_opening(&self) -> &SumcheckOpening<F> {
+        &self.sum_opening
     }
 }
 
@@ -171,7 +171,7 @@ impl<H: Hasher> ClaimAdapter for BaseFoldAdapter<H> {
 
     fn combine_openings(
         a: FriOpening<H::F>,
-        b: H::F,
+        b: SumcheckOpening<H::F>,
     ) -> Result<Self::SharedOpening, Self::Error> {
         Ok(BaseFoldOpening::new(a, b))
     }
