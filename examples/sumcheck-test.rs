@@ -27,7 +27,7 @@ fn main() -> Result<(), String> {
     let witness = SumcheckWitness::new(poly);
     let transcript = AlgebraicTranscript::<BabyBear>::new();
 
-    let (proof, _) = prove::<Sumcheck<BabyBear>, _>(claim.clone(), witness, transcript)
+    let (proof, _) = prove::<Sumcheck<SumcheckWitness<BabyBear>>, _>(claim.clone(), witness, transcript)
         .map_err(|e| format!("prove: {e}"))?;
 
     println!("proof: {} round messages", proof.messages().len());
@@ -36,7 +36,7 @@ fn main() -> Result<(), String> {
     let v_transcript = AlgebraicTranscript::<BabyBear>::new();
     let v_claim = SumcheckClaim::new(claimed_sum, 2);
 
-    let (verdict, _) = verify::<Sumcheck<BabyBear>, _>(v_claim, proof.messages(), v_transcript)
+    let (verdict, _) = verify::<Sumcheck<SumcheckWitness<BabyBear>>, _>(v_claim, proof.messages(), v_transcript)
         .map_err(|e| format!("verify: {e}"))?;
 
     match verdict {

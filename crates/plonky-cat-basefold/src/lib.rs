@@ -9,9 +9,11 @@ use plonky_cat_field::Field;
 use plonky_cat_hash::Hasher;
 use plonky_cat_reduce::{ClaimAdapter, ClaimLens, Interleave};
 use plonky_cat_fri::{Fri, FriClaim, FriOpening, FriWitness};
-use plonky_cat_sumcheck::{Sumcheck, SumcheckClaim, SumcheckOpening, SumcheckWitness};
+use plonky_cat_sumcheck::{
+    Sumcheck, SumcheckClaim, SumcheckFunction, SumcheckOpening,
+};
 
-// -- Shared claim: pairs a FRI codeword claim with a sumcheck claim --
+// -- Shared claim --
 
 #[derive(Debug, Clone)]
 pub struct BaseFoldShared<F: Field> {
@@ -36,22 +38,22 @@ impl<F: Field> BaseFoldShared<F> {
     }
 }
 
-// -- Shared witness --
+// -- Shared witness, generic over sumcheck function --
 
 #[derive(Debug, Clone)]
-pub struct BaseFoldWitness<H: Hasher> {
+pub struct BaseFoldWitness<H: Hasher, W> {
     fri_witness: FriWitness<H>,
-    sum_witness: SumcheckWitness<H::F>,
+    sum_witness: W,
 }
 
-impl<H: Hasher> BaseFoldWitness<H> {
+impl<H: Hasher, W> BaseFoldWitness<H, W> {
     #[must_use]
-    pub fn new(fri_witness: FriWitness<H>, sum_witness: SumcheckWitness<H::F>) -> Self {
+    pub fn new(fri_witness: FriWitness<H>, sum_witness: W) -> Self {
         Self { fri_witness, sum_witness }
     }
 }
 
-// -- Shared opening: FRI constant + sumcheck final eval --
+// -- Shared opening --
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BaseFoldOpening<F: Field> {
@@ -76,7 +78,7 @@ impl<F: Field> BaseFoldOpening<F> {
     }
 }
 
-// -- Lenses: project shared state into FRI / sumcheck claims --
+// -- Claim lenses --
 
 pub struct FriLens<F>(PhantomData<F>);
 
@@ -114,12 +116,12 @@ impl<F: Field> ClaimLens for SumcheckLens<F> {
 
 // -- Witness lenses --
 
-pub struct FriWitnessLens<H>(PhantomData<H>);
+pub struct FriWitnessLens<H, W>(PhantomData<(H, W)>);
 
-impl<H: Hasher> ClaimLens for FriWitnessLens<H> {
-    type Whole = BaseFoldWitness<H>;
+impl<H: Hasher, W: SumcheckFunction<F = H::F>> ClaimLens for FriWitnessLens<H, W> {
+    type Whole = BaseFoldWitness<H, W>;
     type Part = FriWitness<H>;
-    type Residue = SumcheckWitness<H::F>;
+    type Residue = W;
     type Error = Error;
 
     fn split(whole: Self::Whole) -> Result<(Self::Part, Self::Residue), Self::Error> {
@@ -131,11 +133,11 @@ impl<H: Hasher> ClaimLens for FriWitnessLens<H> {
     }
 }
 
-pub struct SumcheckWitnessLens<H>(PhantomData<H>);
+pub struct SumcheckWitnessLens<H, W>(PhantomData<(H, W)>);
 
-impl<H: Hasher> ClaimLens for SumcheckWitnessLens<H> {
-    type Whole = BaseFoldWitness<H>;
-    type Part = SumcheckWitness<H::F>;
+impl<H: Hasher, W: SumcheckFunction<F = H::F>> ClaimLens for SumcheckWitnessLens<H, W> {
+    type Whole = BaseFoldWitness<H, W>;
+    type Part = W;
     type Residue = FriWitness<H>;
     type Error = Error;
 
@@ -148,24 +150,28 @@ impl<H: Hasher> ClaimLens for SumcheckWitnessLens<H> {
     }
 }
 
-// -- The adapter --
+// -- The adapter, generic over hash and sumcheck function --
 
-pub struct BaseFoldAdapter<H> {
-    _marker: PhantomData<H>,
+pub struct BaseFoldAdapter<H, W> {
+    _marker: PhantomData<(H, W)>,
 }
 
-impl<H: Hasher> ClaimAdapter for BaseFoldAdapter<H> {
+impl<H, W> ClaimAdapter for BaseFoldAdapter<H, W>
+where
+    H: Hasher,
+    W: SumcheckFunction<F = H::F>,
+{
     type A = Fri<H>;
-    type B = Sumcheck<H::F>;
+    type B = Sumcheck<W>;
 
     type Shared = BaseFoldShared<H::F>;
-    type SharedWitness = BaseFoldWitness<H>;
+    type SharedWitness = BaseFoldWitness<H, W>;
     type SharedOpening = BaseFoldOpening<H::F>;
 
     type LensA = FriLens<H::F>;
     type LensB = SumcheckLens<H::F>;
-    type WLensA = FriWitnessLens<H>;
-    type WLensB = SumcheckWitnessLens<H>;
+    type WLensA = FriWitnessLens<H, W>;
+    type WLensB = SumcheckWitnessLens<H, W>;
 
     type Error = Error;
 
@@ -177,6 +183,8 @@ impl<H: Hasher> ClaimAdapter for BaseFoldAdapter<H> {
     }
 }
 
-/// BaseFold = Interleave<BaseFoldAdapter<H>>.
-/// This is the v0.1 thesis: no handwritten protocol code.
-pub type BaseFold<H> = Interleave<BaseFoldAdapter<H>>;
+/// BaseFold = Interleave<BaseFoldAdapter<H, W>>.
+/// Generic over hash function and sumcheck witness type.
+/// For degree-1 (multilinear): `BaseFold<H, LinearWitness<F>>`
+/// For degree-2 (product):     `BaseFold<H, ProductWitness<F>>`
+pub type BaseFold<H, W> = Interleave<BaseFoldAdapter<H, W>>;

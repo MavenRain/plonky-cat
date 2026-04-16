@@ -4,6 +4,7 @@ use plonky_cat_plonk::{AddGate, PlonkTrace, constraint_poly};
 use plonky_cat_fri::{FriClaim, FriWitness};
 use plonky_cat_sumcheck::{SumcheckClaim, SumcheckWitness};
 use plonky_cat_basefold::{BaseFold, BaseFoldShared, BaseFoldWitness};
+use plonky_cat_sumcheck::LinearWitness;
 use plonky_cat_transcript::{AlgebraicTranscript, Transcript};
 use plonky_cat_prover::prove;
 use plonky_cat_verifier::{verify, Verdict};
@@ -62,7 +63,7 @@ fn main() -> Result<(), String> {
         println!("--- proving with BaseFold = Interleave<FRI, Sumcheck> ---");
         let transcript = AlgebraicTranscript::<F>::new();
 
-        let (proof, _) = prove::<BaseFold<H>, _>(shared.clone(), witness, transcript)
+        let (proof, _) = prove::<BaseFold<H, LinearWitness<F>>, _>(shared.clone(), witness, transcript)
             .map_err(|e| format!("prove: {e:?}"))?;
 
         println!("proof: {} round messages", proof.messages().len());
@@ -71,7 +72,7 @@ fn main() -> Result<(), String> {
         println!("--- verifying ---");
         let v_transcript = AlgebraicTranscript::<F>::new();
 
-        let (verdict, _) = verify::<BaseFold<H>, _>(shared, proof.messages(), v_transcript)
+        let (verdict, _) = verify::<BaseFold<H, LinearWitness<F>>, _>(shared, proof.messages(), v_transcript)
             .map_err(|e| format!("verify: {e:?}"))?;
 
         match verdict {
