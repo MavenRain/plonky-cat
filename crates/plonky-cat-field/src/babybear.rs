@@ -2,6 +2,7 @@ use crate::error::Error;
 use crate::Field;
 
 const P: u64 = 0x7800_0001;
+const TWO_ADIC_ORDER: u32 = 27;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct BabyBear(u64);
@@ -10,6 +11,26 @@ impl BabyBear {
     #[must_use]
     pub fn modulus() -> u64 {
         P
+    }
+
+    #[must_use]
+    pub fn two_adic_order() -> u32 {
+        TWO_ADIC_ORDER
+    }
+
+    /// Element of multiplicative order 2^27.
+    #[must_use]
+    pub fn two_adic_generator() -> Self {
+        Self::from(31u32).pow(15)
+    }
+
+    /// Principal 2^log_n-th root of unity.  Requires log_n <= 27.
+    pub fn root_of_unity(log_n: u32) -> Result<Self, Error> {
+        if log_n > TWO_ADIC_ORDER {
+            Err(Error::InvalidFieldElement)
+        } else {
+            Ok(Self::two_adic_generator().pow(1u64 << (TWO_ADIC_ORDER - log_n)))
+        }
     }
 }
 

@@ -9,6 +9,8 @@ publish = false
 [dependencies]
 plonky-cat-field = { workspace = true }
 plonky-cat-poly = { workspace = true }
+plonky-cat-fft = { workspace = true }
+plonky-cat-code = { workspace = true }
 plonky-cat-hash = { workspace = true }
 plonky-cat-merkle = { workspace = true }
 plonky-cat-transcript = { workspace = true }

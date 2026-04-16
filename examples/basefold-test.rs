@@ -36,7 +36,7 @@ fn main() -> Result<(), String> {
         .map_err(|e| format!("fri witness: {e}"))?;
     let merkle_root = fri_witness.merkle_root()
         .map_err(|e| format!("merkle root: {e}"))?;
-    let fri_claim = FriClaim::new(merkle_root, 4);
+    let fri_claim = FriClaim::until_constant(merkle_root, 4);
 
     println!("FRI codeword length: 4");
     println!("merkle root: {merkle_root}");

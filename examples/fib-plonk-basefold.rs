@@ -54,7 +54,7 @@ fn main() -> Result<(), String> {
         let merkle_root = fri_witness.merkle_root()
             .map_err(|e| format!("merkle root: {e}"))?;
 
-        let fri_claim = FriClaim::new(merkle_root, 4);
+        let fri_claim = FriClaim::until_constant(merkle_root, 4);
         let sum_claim = SumcheckClaim::new(sum, 2);
 
         let shared = BaseFoldShared::new(fri_claim, sum_claim);

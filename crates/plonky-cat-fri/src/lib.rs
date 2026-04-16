@@ -20,12 +20,19 @@ use plonky_cat_reduce::{
 pub struct FriClaim<F> {
     merkle_root: F,
     codeword_len: usize,
+    target_len: usize,
 }
 
 impl<F: Field> FriClaim<F> {
     #[must_use]
-    pub fn new(merkle_root: F, codeword_len: usize) -> Self {
-        Self { merkle_root, codeword_len }
+    pub fn new(merkle_root: F, codeword_len: usize, target_len: usize) -> Self {
+        Self { merkle_root, codeword_len, target_len }
+    }
+
+    /// Convenience: fold until a single element remains.
+    #[must_use]
+    pub fn until_constant(merkle_root: F, codeword_len: usize) -> Self {
+        Self::new(merkle_root, codeword_len, 1)
     }
 
     #[must_use]
@@ -36,6 +43,11 @@ impl<F: Field> FriClaim<F> {
     #[must_use]
     pub fn codeword_len(&self) -> usize {
         self.codeword_len
+    }
+
+    #[must_use]
+    pub fn target_len(&self) -> usize {
+        self.target_len
     }
 }
 
@@ -159,7 +171,7 @@ where
         ProverStep<Self::Claim, Self::Witness, Self::RoundMsg, Self::BaseOpening>,
         Self::Error,
     > {
-        if claim.codeword_len <= 1 {
+        if claim.codeword_len <= claim.target_len {
             witness.codeword.first()
                 .copied()
                 .ok_or(Error::CodewordEmpty)
@@ -175,7 +187,7 @@ where
             let msg = FriRoundMsg::new(new_root);
 
             Ok(ProverStep::Continue(ProverContinue::new(
-                FriClaim::new(new_root, claim.codeword_len / 2),
+                FriClaim::new(new_root, claim.codeword_len / 2, claim.target_len),
                 new_witness,
                 msg,
             )))
@@ -187,19 +199,19 @@ where
         message: Self::RoundMsg,
         _challenge: Self::Challenge,
     ) -> Result<VerifierStep<Self::Claim, Self::BaseOpening>, Self::Error> {
-        if claim.codeword_len <= 1 {
+        if claim.codeword_len <= claim.target_len {
             Err(Error::StepOnFinished)
         } else {
             let new_len = claim.codeword_len / 2;
 
-            if new_len <= 1 {
+            if new_len <= claim.target_len {
                 Ok(VerifierStep::Done(VerifierDone::new(
-                    FriClaim::new(message.folded_root, new_len),
+                    FriClaim::new(message.folded_root, new_len, claim.target_len),
                     FriOpening::new(message.folded_root),
                 )))
             } else {
                 Ok(VerifierStep::Continue(VerifierContinue::new(
-                    FriClaim::new(message.folded_root, new_len),
+                    FriClaim::new(message.folded_root, new_len, claim.target_len),
                 )))
             }
         }
