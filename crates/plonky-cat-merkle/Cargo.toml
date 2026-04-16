@@ -1,0 +1,15 @@
+[package]
+name = "plonky-cat-merkle"
+description = "Merkle tree over plonky-cat-hash"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+comp-cat-rs = { workspace = true }
+plonky-cat-field = { workspace = true }
+plonky-cat-hash = { workspace = true }
+
+[lints]
+workspace = true

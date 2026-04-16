@@ -1,0 +1,13 @@
+[package]
+name = "plonky-cat-tensor-pcs"
+description = "Tensor polynomial commitment schemes: Ligero, Brakedown, Orion"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+comp-cat-rs = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,77 @@
+[package]
+name = "plonky-cat"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+plonky-cat-field = { workspace = true }
+plonky-cat-poly = { workspace = true }
+plonky-cat-hash = { workspace = true }
+plonky-cat-merkle = { workspace = true }
+plonky-cat-transcript = { workspace = true }
+plonky-cat-reduce = { workspace = true }
+plonky-cat-fri = { workspace = true }
+plonky-cat-sumcheck = { workspace = true }
+plonky-cat-basefold = { workspace = true }
+plonky-cat-plonk = { workspace = true }
+plonky-cat-prover = { workspace = true }
+plonky-cat-verifier = { workspace = true }
+
+[lints]
+workspace = true
+
+[workspace]
+resolver = "3"
+members = [
+    "crates/plonky-cat-field",
+    "crates/plonky-cat-poly",
+    "crates/plonky-cat-fft",
+    "crates/plonky-cat-code",
+    "crates/plonky-cat-hash",
+    "crates/plonky-cat-merkle",
+    "crates/plonky-cat-transcript",
+    "crates/plonky-cat-reduce",
+    "crates/plonky-cat-fri",
+    "crates/plonky-cat-sumcheck",
+    "crates/plonky-cat-basefold",
+    "crates/plonky-cat-tensor-pcs",
+    "crates/plonky-cat-plonk",
+    "crates/plonky-cat-prover",
+    "crates/plonky-cat-verifier",
+]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/MavenRain/plonky-cat"
+readme = "README.md"
+keywords = ["zero-knowledge", "plonk", "fri", "sumcheck", "category-theory"]
+categories = ["cryptography", "mathematics"]
+
+[workspace.dependencies]
+comp-cat-rs = "0.5"
+proptest = "1"
+plonky-cat-field = { path = "crates/plonky-cat-field", version = "0.0.1" }
+plonky-cat-poly = { path = "crates/plonky-cat-poly", version = "0.0.1" }
+plonky-cat-fft = { path = "crates/plonky-cat-fft", version = "0.0.1" }
+plonky-cat-code = { path = "crates/plonky-cat-code", version = "0.0.1" }
+plonky-cat-hash = { path = "crates/plonky-cat-hash", version = "0.0.1" }
+plonky-cat-merkle = { path = "crates/plonky-cat-merkle", version = "0.0.1" }
+plonky-cat-transcript = { path = "crates/plonky-cat-transcript", version = "0.0.1" }
+plonky-cat-reduce = { path = "crates/plonky-cat-reduce", version = "0.0.1" }
+plonky-cat-fri = { path = "crates/plonky-cat-fri", version = "0.0.1" }
+plonky-cat-sumcheck = { path = "crates/plonky-cat-sumcheck", version = "0.0.1" }
+plonky-cat-basefold = { path = "crates/plonky-cat-basefold", version = "0.0.1" }
+plonky-cat-tensor-pcs = { path = "crates/plonky-cat-tensor-pcs", version = "0.0.1" }
+plonky-cat-plonk = { path = "crates/plonky-cat-plonk", version = "0.0.1" }
+plonky-cat-prover = { path = "crates/plonky-cat-prover", version = "0.0.1" }
+plonky-cat-verifier = { path = "crates/plonky-cat-verifier", version = "0.0.1" }
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+needless_pass_by_value = "warn"
+manual_map = "warn"

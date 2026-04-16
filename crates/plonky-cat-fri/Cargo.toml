@@ -1,0 +1,18 @@
+[package]
+name = "plonky-cat-fri"
+description = "FRI as a ReductionFunctor implementation"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+comp-cat-rs = { workspace = true }
+plonky-cat-field = { workspace = true }
+plonky-cat-poly = { workspace = true }
+plonky-cat-hash = { workspace = true }
+plonky-cat-merkle = { workspace = true }
+plonky-cat-reduce = { workspace = true }
+
+[lints]
+workspace = true

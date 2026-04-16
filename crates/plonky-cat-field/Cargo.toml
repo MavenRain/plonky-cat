@@ -1,0 +1,13 @@
+[package]
+name = "plonky-cat-field"
+description = "Field abstractions for plonky-cat: BabyBear, Goldilocks, Mersenne31"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+comp-cat-rs = { workspace = true }
+
+[lints]
+workspace = true

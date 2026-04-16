@@ -1,0 +1,20 @@
+[package]
+name = "plonky-cat-basefold"
+description = "BaseFold as Interleave<BaseFoldAdapter>"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+comp-cat-rs = { workspace = true }
+plonky-cat-field = { workspace = true }
+plonky-cat-poly = { workspace = true }
+plonky-cat-hash = { workspace = true }
+plonky-cat-merkle = { workspace = true }
+plonky-cat-reduce = { workspace = true }
+plonky-cat-fri = { workspace = true }
+plonky-cat-sumcheck = { workspace = true }
+
+[lints]
+workspace = true
