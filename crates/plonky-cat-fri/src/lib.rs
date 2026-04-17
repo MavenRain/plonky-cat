@@ -1,7 +1,10 @@
 #![forbid(unsafe_code)]
 
 mod error;
+pub mod whir;
+
 pub use self::error::Error;
+pub use self::whir::Whir;
 
 use std::marker::PhantomData;
 

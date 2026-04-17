@@ -1,7 +1,10 @@
 #![forbid(unsafe_code)]
 
 mod error;
+pub mod recursion;
+
 pub use self::error::Error;
+pub use self::recursion::{Recurse, RecursionBridge};
 pub use self::error::InterleaveError;
 pub use self::error::SeqError;
 

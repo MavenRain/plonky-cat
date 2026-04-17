@@ -1,10 +1,14 @@
 #![forbid(unsafe_code)]
 
 mod error;
+mod griffin;
 mod poseidon2;
+mod tip5;
 
 pub use self::error::Error;
+pub use self::griffin::Griffin;
 pub use self::poseidon2::Poseidon2;
+pub use self::tip5::Tip5;
 
 use std::marker::PhantomData;
 use plonky_cat_field::Field;

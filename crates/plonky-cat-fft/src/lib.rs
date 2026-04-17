@@ -1,6 +1,9 @@
 #![forbid(unsafe_code)]
 
+pub mod circle;
 mod error;
+
+pub use self::circle::CirclePoint;
 pub use self::error::Error;
 
 use plonky_cat_field::Field;

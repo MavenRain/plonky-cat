@@ -4,11 +4,15 @@ mod error;
 pub use self::error::Error;
 
 mod babybear;
+mod binary_tower;
 mod goldilocks;
+mod koalabear;
 mod mersenne31;
 
 pub use self::babybear::BabyBear;
+pub use self::binary_tower::BinaryField8;
 pub use self::goldilocks::Goldilocks;
+pub use self::koalabear::KoalaBear;
 pub use self::mersenne31::Mersenne31;
 
 pub trait Field:

@@ -1,6 +1,11 @@
 #![forbid(unsafe_code)]
 
+mod air;
+mod ccs;
 mod error;
+
+pub use self::air::{AirTrace, FibTransition, MulTransition, TransitionConstraint};
+pub use self::ccs::{CcsInstance, SparseMatrix};
 pub use self::error::Error;
 
 use plonky_cat_field::Field;

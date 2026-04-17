@@ -1,6 +1,10 @@
 #![forbid(unsafe_code)]
 
 mod error;
+pub mod binius;
+pub mod gkr;
+pub mod logup;
+
 pub use self::error::Error;
 
 use std::marker::PhantomData;
