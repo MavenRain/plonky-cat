@@ -19,7 +19,7 @@ use plonky_cat_reduce::{
 
 // -- Claims and witnesses --
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FriClaim<F> {
     merkle_root: F,
     codeword_len: usize,

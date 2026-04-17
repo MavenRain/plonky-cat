@@ -18,5 +18,8 @@ plonky-cat-reduce = { workspace = true }
 plonky-cat-fri = { workspace = true }
 plonky-cat-sumcheck = { workspace = true }
 
+[dev-dependencies]
+proptest = { workspace = true }
+
 [lints]
 workspace = true

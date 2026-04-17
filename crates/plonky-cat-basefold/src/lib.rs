@@ -15,7 +15,7 @@ use plonky_cat_sumcheck::{
 
 // -- Shared claim --
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BaseFoldShared<F: Field> {
     fri_claim: FriClaim<F>,
     sum_claim: SumcheckClaim<F>,

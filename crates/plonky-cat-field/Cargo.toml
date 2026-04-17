@@ -11,5 +11,8 @@ homepage.workspace = true
 [dependencies]
 comp-cat-rs = { workspace = true }
 
+[dev-dependencies]
+proptest = { workspace = true }
+
 [lints]
 workspace = true
