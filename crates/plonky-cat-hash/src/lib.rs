@@ -1,7 +1,10 @@
 #![forbid(unsafe_code)]
 
 mod error;
+mod poseidon2;
+
 pub use self::error::Error;
+pub use self::poseidon2::Poseidon2;
 
 use std::marker::PhantomData;
 use plonky_cat_field::Field;

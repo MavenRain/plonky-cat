@@ -46,7 +46,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.0.1"
+version = "0.2.0"
 authors = ["Onyeka Obi <softwareengineerasaservant@isurvivable.cv>"]
 edition = "2024"
 license = "MIT OR Apache-2.0"
@@ -59,21 +59,21 @@ categories = ["cryptography", "mathematics"]
 [workspace.dependencies]
 comp-cat-rs = "0.5"
 proptest = "1"
-plonky-cat-field = { path = "crates/plonky-cat-field", version = "0.0.1" }
-plonky-cat-poly = { path = "crates/plonky-cat-poly", version = "0.0.1" }
-plonky-cat-fft = { path = "crates/plonky-cat-fft", version = "0.0.1" }
-plonky-cat-code = { path = "crates/plonky-cat-code", version = "0.0.1" }
-plonky-cat-hash = { path = "crates/plonky-cat-hash", version = "0.0.1" }
-plonky-cat-merkle = { path = "crates/plonky-cat-merkle", version = "0.0.1" }
-plonky-cat-transcript = { path = "crates/plonky-cat-transcript", version = "0.0.1" }
-plonky-cat-reduce = { path = "crates/plonky-cat-reduce", version = "0.0.1" }
-plonky-cat-fri = { path = "crates/plonky-cat-fri", version = "0.0.1" }
-plonky-cat-sumcheck = { path = "crates/plonky-cat-sumcheck", version = "0.0.1" }
-plonky-cat-basefold = { path = "crates/plonky-cat-basefold", version = "0.0.1" }
-plonky-cat-tensor-pcs = { path = "crates/plonky-cat-tensor-pcs", version = "0.0.1" }
-plonky-cat-plonk = { path = "crates/plonky-cat-plonk", version = "0.0.1" }
-plonky-cat-prover = { path = "crates/plonky-cat-prover", version = "0.0.1" }
-plonky-cat-verifier = { path = "crates/plonky-cat-verifier", version = "0.0.1" }
+plonky-cat-field = { path = "crates/plonky-cat-field", version = "0.2.0" }
+plonky-cat-poly = { path = "crates/plonky-cat-poly", version = "0.2.0" }
+plonky-cat-fft = { path = "crates/plonky-cat-fft", version = "0.2.0" }
+plonky-cat-code = { path = "crates/plonky-cat-code", version = "0.2.0" }
+plonky-cat-hash = { path = "crates/plonky-cat-hash", version = "0.2.0" }
+plonky-cat-merkle = { path = "crates/plonky-cat-merkle", version = "0.2.0" }
+plonky-cat-transcript = { path = "crates/plonky-cat-transcript", version = "0.2.0" }
+plonky-cat-reduce = { path = "crates/plonky-cat-reduce", version = "0.2.0" }
+plonky-cat-fri = { path = "crates/plonky-cat-fri", version = "0.2.0" }
+plonky-cat-sumcheck = { path = "crates/plonky-cat-sumcheck", version = "0.2.0" }
+plonky-cat-basefold = { path = "crates/plonky-cat-basefold", version = "0.2.0" }
+plonky-cat-tensor-pcs = { path = "crates/plonky-cat-tensor-pcs", version = "0.2.0" }
+plonky-cat-plonk = { path = "crates/plonky-cat-plonk", version = "0.2.0" }
+plonky-cat-prover = { path = "crates/plonky-cat-prover", version = "0.2.0" }
+plonky-cat-verifier = { path = "crates/plonky-cat-verifier", version = "0.2.0" }
 
 [workspace.lints.clippy]
 all = { level = "deny", priority = -1 }
